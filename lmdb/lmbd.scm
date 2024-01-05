@@ -170,6 +170,8 @@
 (define (env-close env)
   ((foreign-fn "mdb_env_close" '(*) void) env))
 (define* (env-copy env path #:optional (flags #f))
+  (unless (file-exists? path)
+    (mkdir path))
   (check-error
    (if flags
        ((foreign-fn "mdb_env_copy2" `(* * ,unsigned-int) int)
