@@ -7,7 +7,6 @@
   #:export ())
 
 (define liblmdb (load-foreign-library "liblmdb.so"))
-(define liblmdb (load-foreign-library "/home/aartaka/.guix-profile/lib/liblmdb.so"))
 
 (define (foreign-fn name args return-type)
   (foreign-library-function
