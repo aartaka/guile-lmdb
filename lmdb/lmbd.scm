@@ -4,7 +4,89 @@
   #:use-module (system foreign-object)
   #:use-module (rnrs bytevectors)
   #:use-module (srfi srfi-1)
-  #:export ())
+  #:export (;; Environment flags
+            +fixedmap+
+            +nosubdir+
+            +nosync+
+            +rdonly+
+            +nometasync+
+            +writemap+
+            +mapasync+
+            +notls+
+            +nolock+
+            +nordahead+
+            +nomeminit+
+            ;; DB flags
+            +reversekey+
+            +dupsort+
+            +integerkey+
+            +dupfixed+
+            +integerdup+
+            +reversedup+
+            +create+
+            ;; Write flags
+            +nooverwrite+
+            +noodupdata+
+            +current+
+            +reserve+
+            +append+
+            +appenddup+
+            +multiple+
+            ;; Cursor flags
+            +first+
+            +first-dup+
+            +get-both+
+            +get-both-range+
+            +get-current+
+            +get-multiple+
+            +get-last+
+            +get-last-dup+
+            +get-next+
+            +get-next-dup+
+            +get-next-multiple+
+            +get-next-nodup+
+            +get-prev+
+            +get-prev-dup+
+            +get-prev-nodup+
+            +get-set+
+            +get-set-key+
+            +get-set-range+
+            ;; Environment
+            env-create
+            env-open
+            env-close
+            env-copy
+            ;; Transaction
+            txn-begin
+            txn-abort
+            txn-reset
+            txn-commit
+            txn-renew
+            ;; Valus
+            val?
+            make-val
+            wrap-val
+            unwrap-val
+            val-size
+            val-data
+            val-data-string
+            val-data-bv
+            ;; Database
+            dbi-open
+            dbi-close
+            ;; Actual ops
+            get
+            put
+            del
+            ;; Cursor ops
+            cursor-open
+            cursor-get
+            cursor-first
+            cursor-next
+            cursor-put
+            cursor-del
+            ;; Helpers
+            call-with-env))
 
 (define liblmdb (load-foreign-library "liblmdb.so"))
 
