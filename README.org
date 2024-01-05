@@ -1,0 +1,21 @@
+#+TITLE:Guile LMDB bindings
+
+This allows to interact with LMDB in Guile. The focus of the library
+is making an otherwise unforgiving LMDB C API more Scheme-ish and
+lenient. Thus
+- Values can be anything: strings, bytevectors, or wrapped ~val~
+  objects.
+- All the error codes are prettily displayed via Guile ~error~,
+  preventing the further operations on error.
+- Lots of optional arguments for (opinionated) non-mandatory
+  arguments.
+
+All the APIs are following the LMDB names, with ~mdb_~ prefix stripped
+off, and with underscores replaced with hyphen. Thus ~mdb_env_create~
+is ~env-create~. This might be problematic, because some of the names
+(~val~) are really short and thus might collide with some
+codebase. Thus, it's better to use this library with a prefix to avoid
+nasty namespace errors.
+#+begin_src scheme
+(use-modules ((lmdb) #:prefix mdb:))
+#+end_src
