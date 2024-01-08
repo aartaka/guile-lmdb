@@ -333,6 +333,13 @@
       txn dbi (unwrap-stat stat)))
     stat))
 
+(define (env-stat env)
+  (let ((stat (make-stat)))
+    (check-error
+     ((foreign-fn "mdb_env_stat" `(* *) int)
+      env (unwrap-stat stat)))
+    stat))
+
 (define (call-with-env path thunk)
   (let ((env (env-create)))
     (thunk env)
