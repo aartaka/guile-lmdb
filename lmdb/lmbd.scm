@@ -280,8 +280,8 @@
       txn dbi cursor-ptr))
     (dereference-pointer cursor-ptr)))
 
-(define* (cursor-get cursor #:optional (op +get-current+))
-  (let* ((key (make-val))
+(define* (cursor-get cursor #:optional (op +get-current+) (original-key #f))
+  (let* ((key (make-val original-key))
          (key-ptr (unwrap-val key))
          (data (make-val))
          (data-ptr (unwrap-val data)))
