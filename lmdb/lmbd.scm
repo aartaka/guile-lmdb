@@ -266,7 +266,7 @@
     (unwrap-val (make-val key))
     (unwrap-val (make-val data))
     flags)))
-(define (del txn dbi key data)
+(define* (del txn dbi key #:optional (data #f))
   (check-error
    ((foreign-fn "mdb_del" `(* ,unsigned-int * *) int)
     txn dbi
