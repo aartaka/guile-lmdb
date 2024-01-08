@@ -348,7 +348,7 @@
 
 (define (call-with-env-and-txn path thunk)
   (let ((env (env-create)))
-    (env-open path)
+    (env-open env path)
     (let ((txn (txn-begin env)))
       (thunk env txn)
       (txn-commit txn))
