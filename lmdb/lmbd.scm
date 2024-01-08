@@ -311,26 +311,20 @@
     (format p "#<MDB_stat, depth ~d, ~d entries, ~s pages>"
             (stat-depth s) (stat-entries s) (stat-pages s))))
 
-(define (parse-stat s)
-  (parse-c-struct
-   (unwrap-stat s)
-   (list unsigned-int unsigned-int size_t size_t size_t size_t)))
+(define (make-stat)
+  (wrap-stat
+   (make-c-struct stat-types (list 0 0 0 0 0 0))))
 
+(define stat-types (list unsigned-int unsigned-int size_t size_t size_t size_t))
+(define (parse-stat s)
+  (parse-c-struct (unwrap-stat s) stat-types))
 (define (stat-depth s)
   (second (parse-stat s)))
-
 (define (stat-entries s)
   (last (parse-stat s)))
-
 (define (stat-pages s)
   (let ((p (parse-stat s)))
     (list (third p) (fourth p) (fifth p))))
-
-(define (make-stat)
-  (wrap-stat
-   (make-c-struct
-    (list unsigned-int unsigned-int size_t size_t size_t size_t)
-    (list 0 0 0 0 0 0))))
 
 (define (dbi-stat txn dbi)
   (let ((stat (make-stat)))
