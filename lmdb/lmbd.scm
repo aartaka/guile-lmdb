@@ -212,6 +212,9 @@
 (define (val-data-bv val)
   (pointer->bytevector (val-data val) (val-size val)))
 
+(define (val-data-parse val types)
+  (parse-c-struct (val-data val) types))
+
 (define* (make-val #:optional
                    (contents #f)
                    (size (cond
