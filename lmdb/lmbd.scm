@@ -304,6 +304,41 @@
    ((foreign-fn "mdb_cursor_del" `(* ,unsigned-int) int)
     cursor)))
 
+(define-wrapped-pointer-type stat
+  stat?
+  wrap-stat unwrap-stat
+  (lambda (s p)
+    (format p "#<MDB_stat, depth ~d, ~d entries, ~s pages>"
+            (stat-depth s) (stat-entries s) (stat-pages s))))
+
+(define (parse-stat s)
+  (parse-c-struct
+   (unwrap-stat s)
+   (list unsigned-int unsigned-int size_t size_t size_t size_t)))
+
+(define (stat-depth s)
+  (second (parse-stat s)))
+
+(define (stat-entries s)
+  (last (parse-stat s)))
+
+(define (stat-pages s)
+  (let ((p (parse-stat s)))
+    (list (third p) (fourth p) (fifth p))))
+
+(define (make-stat)
+  (wrap-stat
+   (make-c-struct
+    (list unsigned-int unsigned-int size_t size_t size_t size_t)
+    (list 0 0 0 0 0 0))))
+
+(define (dbi-stat txn dbi)
+  (let ((stat (make-stat)))
+    (check-error
+     ((foreign-fn "mdb_stat" `(* ,unsigned-int *) int)
+      txn dbi (unwrap-stat stat)))
+    stat))
+
 (define (call-with-env path thunk)
   (let ((env (env-create)))
     (thunk env)
