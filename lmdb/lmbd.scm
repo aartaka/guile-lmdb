@@ -241,7 +241,7 @@
                     ((pointer? contents)
                      contents)))))))
 
-(define* (dbi-open txn name #:optional (flags 0))
+(define* (dbi-open txn name #:optional (flags +create+))
   (let ((ptr (alloc-ptr (sizeof unsigned-int))))
     ;; FIXME: DBI is not a pointer, but rather unsigned-int.
     (check-error ((foreign-fn "mdb_dbi_open" `(* * ,unsigned-int *) int)
