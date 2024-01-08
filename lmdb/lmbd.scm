@@ -297,6 +297,8 @@
     (list key data)))
 (define (cursor-first cursor)
   (cursor-get cursor +first+))
+(define (cursor-last cursor)
+  (cursor-get cursor +get-last+))
 (define (cursor-next cursor)
   (cursor-get cursor +get-next+))
 (define* (cursor-put cursor key val #:optional (flags 0))
