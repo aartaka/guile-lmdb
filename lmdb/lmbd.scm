@@ -340,7 +340,10 @@
       env (unwrap-stat stat)))
     stat))
 
-(define (call-with-env path thunk)
+(define (call-with-env-and-txn path thunk)
   (let ((env (env-create)))
-    (thunk env)
+    (env-open path)
+    (let ((txn (txn-begin env)))
+      (thunk env txn)
+      (txn-commit txn))
     (env-close env)))
