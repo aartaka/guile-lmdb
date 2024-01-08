@@ -312,6 +312,19 @@
    ((foreign-fn "mdb_cursor_del" `(* ,unsigned-int) int)
     cursor)))
 
+(define (for-cursor cursor thunk)
+  (let ((last-kv (cursor-last cursor))
+        (first-kv (cursor-first cursor))
+        (kv-eq? (lambda (kv kv2)
+                  (equal? (map val-data-bv kv)
+                          (map val-data-bv kv2)))))
+    (apply thunk first-kv)
+    (unless (kv-eq? first-kv last-kv)
+      (let rec ((kv (cursor-get cursor +get-next+)))
+        (apply thunk kv)
+        (unless (kv-eq? kv last-kv)
+          (rec (cursor-next cursor)))))))
+
 (define-wrapped-pointer-type stat
   stat?
   wrap-stat unwrap-stat
