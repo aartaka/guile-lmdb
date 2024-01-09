@@ -101,6 +101,7 @@
 (define liblmdb (load-foreign-library "liblmdb.so"))
 
 (define (foreign-fn name args return-type)
+  "Generate `foreign-library-function' from a shorter form."
   (foreign-library-function
    liblmdb name
    #:return-type return-type
@@ -163,6 +164,7 @@
       (error (pointer->string ((foreign-fn "mdb_strerror" (list int) '*) err)))))
 
 (define* (env-create #:optional (maxdbs 1))
+  "Make a new env and set the maxdbs number (it's mandatory)."
   (let ((ptr (alloc-ptr)))
     (check-error ((foreign-fn "mdb_env_create" '(*) int) ptr))
     ;; FIXME: `check-error' fails here.
@@ -172,6 +174,7 @@
     (dereference-pointer ptr)))
 
 (define* (env-open env path #:optional (flags 0) (mode #o777))
+  "Open the ENV at the PATH, creating the PATH if necessary."
   (unless (file-exists? path)
     (mkdir path))
   (check-error
@@ -180,6 +183,8 @@
 (define (env-close env)
   ((foreign-fn "mdb_env_close" '(*) void) env))
 (define* (env-copy env path #:optional (flags #f))
+  "Copy an ENV to a new PATH.
+Useful to manage several PATHs with env copies at once."
   (unless (file-exists? path)
     (mkdir path))
   (check-error
@@ -211,9 +216,11 @@
             (val-size v) (pointer-address (val-data v)))))
 
 (define (val-size val)
+  "size_t of the VAL data."
   (first (parse-c-struct (unwrap-val val) `(,size_t *))))
 
 (define (val-data val)
+  "Raw pointer for the VAL data."
   (second (parse-c-struct (unwrap-val val) `(,size_t *))))
 
 (define (val-data-string val)
@@ -223,6 +230,7 @@
   (pointer->bytevector (val-data val) (val-size val)))
 
 (define (val-data-parse val types)
+  "VAL data parsed from C TYPES (via/akin to `parse-c-struct')."
   (parse-c-struct (val-data val) types))
 
 (define* (make-val #:optional
@@ -239,6 +247,15 @@
                           (else
                            (error "Cannot determine the size of "
                                   contents ", provide it manually")))))
+  "Create a new value of SIZE from CONTENTS.
+CONTENTS might be #f or
+- A string.
+- A bytevector.
+- Another val (returned unaltered).
+- A pointer.
+
+SIZE is computed automatically for most of these cases, except
+pointer. You have to explicitly provide the size for the pointer."
   (if (val? contents)
       contents
       (wrap-val
@@ -255,6 +272,7 @@
                      contents)))))))
 
 (define* (dbi-open txn #:optional (name #f) (flags +create+))
+  "Create a new DBI and return it."
   (let ((ptr (alloc-ptr (sizeof unsigned-int))))
     ;; FIXME: DBI is not a pointer, but rather unsigned-int.
     (check-error ((foreign-fn "mdb_dbi_open" `(* * ,unsigned-int *) int)
@@ -270,12 +288,14 @@
   ((foreign-fn "mdb_dbi_close" `(* ,unsigned-int) void) env dbi))
 
 (define* (get txn dbi key)
+  "Get the val for the KEY (anything that `make-val' accepts)."
   (let* ((data-ptr (unwrap-val (make-val))))
     (check-error
      ((foreign-fn "mdb_get" `(* ,unsigned-int * *) int)
       txn dbi (unwrap-val (make-val key)) data-ptr))
     (wrap-val data-ptr)))
 (define* (put txn dbi key data #:optional (flags 0))
+  "Put DATA (anything `make-val`-able) under key (ditto)."
   (check-error
    ((foreign-fn "mdb_put" `(* ,unsigned-int * * ,unsigned-int) int)
     txn dbi
@@ -283,6 +303,7 @@
     (unwrap-val (make-val data))
     flags)))
 (define* (del txn dbi key #:optional (data #f))
+  "Remove the DATA under KEY."
   (check-error
    ((foreign-fn "mdb_del" `(* ,unsigned-int * *) int)
     txn dbi
@@ -290,6 +311,7 @@
     (unwrap-val (make-val data)))))
 
 (define (cursor-open txn dbi)
+  "Open a new cursor and return it."
   (let ((cursor-ptr (alloc-ptr)))
     (check-error
      ((foreign-fn "mdb_cursor_open" `(* ,unsigned-int *) int)
@@ -297,6 +319,10 @@
     (dereference-pointer cursor-ptr)))
 
 (define* (cursor-get cursor #:optional (op +get-current+) (original-key #f))
+  "Set the CURSOR pointer according to the OP and return key-value pair.
+
+The return value is a (KEY VALUE) list, where both KEY and VALUE are
+val objects."
   (let* ((key (make-val original-key))
          (key-ptr (unwrap-val key))
          (data (make-val))
@@ -323,7 +349,7 @@
     cursor)))
 
 (define (for-cursor cursor thunk)
-  "Walk the CURSOR, calling THUNK with entry keys and values.
+  "Walk the CURSOR, calling THUNK with entry keys and values (val-s).
 Stops at the last item.
 Requires that DB has at least one entry, otherwise meaningless and
 throwing errors."
@@ -358,6 +384,7 @@ throwing errors."
 (define (stat-entries s)
   (last (parse-stat s)))
 (define (stat-pages s)
+  "Returns a list of (BRANCH LEAF OVERFLOW) page counts for S stat."
   (let ((p (parse-stat s)))
     (list (third p) (fourth p) (fifth p))))
 
