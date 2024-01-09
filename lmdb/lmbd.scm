@@ -81,6 +81,7 @@
             del
             ;; Cursor ops
             cursor-open
+            cursor-close
             cursor-get
             cursor-first
             cursor-next
@@ -317,6 +318,8 @@ pointer. You have to explicitly provide the size for the pointer."
      ((foreign-fn "mdb_cursor_open" `(* ,unsigned-int *) int)
       txn dbi cursor-ptr))
     (dereference-pointer cursor-ptr)))
+(define (cursor-close cursor)
+  ((foreign-fn "mdb_cursor_close" `(*) void) cursor))
 
 (define* (cursor-get cursor #:optional (op +get-current+) (original-key #f))
   "Set the CURSOR pointer according to the OP and return key-value pair.
