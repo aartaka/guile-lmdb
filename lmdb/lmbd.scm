@@ -71,6 +71,7 @@
             val-data
             val-data-string
             val-data-bv
+            val-data-parse
             ;; Database
             dbi-open
             dbi-close
@@ -85,8 +86,17 @@
             cursor-next
             cursor-put
             cursor-del
+            for-cursor
+            ;; Stat
+            stat?
+            make-stat
+            stat-depth
+            stat-entities
+            stat-pages
+            dbi-stat
+            env-stat
             ;; Helpers
-            call-with-env))
+            call-with-env-and-txn))
 
 (define liblmdb (load-foreign-library "liblmdb.so"))
 
