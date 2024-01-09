@@ -313,6 +313,10 @@
     cursor)))
 
 (define (for-cursor cursor thunk)
+  "Walk the CURSOR, calling THUNK with entry keys and values.
+Stops at the last item.
+Requires that DB has at least one entry, otherwise meaningless and
+throwing errors."
   (let ((last-kv (cursor-last cursor))
         (first-kv (cursor-first cursor))
         (kv-eq? (lambda (kv kv2)
@@ -362,6 +366,9 @@
     stat))
 
 (define (call-with-env-and-txn path thunk)
+  "Create environment and open PATH in it.
+Run THUNK with this environment and a new transaction on it.
+Commit the transaction and close the env aftwerwards."
   (let ((env (env-create)))
     (env-open env path)
     (let ((txn (txn-begin env)))
