@@ -1,4 +1,4 @@
-(define-module (lmdb)
+(define-module (lmdb lmdb)
   #:use-module (system foreign)
   #:use-module (system foreign-library)
   #:use-module (system foreign-object)
