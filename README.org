@@ -88,3 +88,9 @@ a convenient wrapper: ~val~. It's a full-blown object that wraps a
 This is for statistics APIs: ~dbi-stat~ and ~env-stat~. These return a
 ~stat-object~. You can use ~stat-depth~, ~stat-entries~, and
 ~stat-pages~ to retrieve the statistics data.
+
+* Further documentation
+
+Most of the non-obvious functions/variables in the library are heavily
+documented, so refer to their documentation via Guile built-in
+facilities.
