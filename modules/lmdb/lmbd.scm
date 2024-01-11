@@ -416,17 +416,3 @@ Commit the transaction and close the env aftwerwards."
       (thunk env txn)
       (txn-commit txn))
     (env-close env)))
-
-;; (define env (env-create 100))
-;; (env-open env "/home/aartaka/junkyard/68892134a17957d120637e120535386c0996655b/")
-;; (define txn (txn-begin env))
-;; (define dbi (dbi-open txn #f 0))
-;; (define cursor (cursor-open txn dbi))
-;; (dbi-stat txn dbi)
-;; (for-cursor cursor
-;;             (lambda (key data)
-;;               (display (val-data-parse key (list int8 long)))
-;;               (display (val-data-parse data (list float float float float)))))
-;; (let ((kv (cursor-last cursor)))
-;;   (list (val-data-string (first kv))
-;;         (val-data-parse (second kv) (list float float float float))))

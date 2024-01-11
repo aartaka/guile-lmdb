@@ -15,10 +15,10 @@ lenient. Thus
 A simple listing for all the keys and values in the db might look like
 #+begin_src scheme
   (call-with-env-and-txn
-   "path-to-db"
+   "path-to-db-dir/"
    (lambda (env txn)
-     (let ((dbi (dbi-open txn #f 0))
-           (cursor (cursor-open txn dbi)))
+     (let* ((dbi (dbi-open txn #f 0))
+            (cursor (cursor-open txn dbi)))
        (for-cursor
         cursor
         (lambda (key data)
