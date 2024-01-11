@@ -10,6 +10,29 @@ lenient. Thus
 - Lots of optional arguments for (opinionated) non-mandatory
   arguments.
 
+* Getting Started
+
+A simple listing for all the keys and values in the db might look like
+#+begin_src scheme
+  (call-with-env-and-txn
+   "path-to-db"
+   (lambda (env txn)
+     (let ((dbi (dbi-open txn #f 0))
+           (cursor (cursor-open txn dbi)))
+       (for-cursor
+        cursor
+        (lambda (key data)
+          (display (val-data-parse key (list int8 long)))
+          (display (val-data-parse data (list float float float float))))))))
+#+end_src
+
+~call-with-env-and-txn~ and ~for-cursor~ are two procedures optimizing
+the typical workflows: managing the environment+transaction; and going
+through cursor values. Other parts are visibly clunkier and closer to
+the LMDB-provided APIs.
+
+* Compatibility with LMDB conventions
+
 All the APIs are following the LMDB names, with ~mdb_~ prefix stripped
 off, and with underscores replaced with hyphen. Thus ~mdb_env_create~
 is ~env-create~. This might be problematic, because some of the names
@@ -19,3 +42,49 @@ nasty namespace errors.
 #+begin_src scheme
 (use-modules ((lmdb) #:prefix mdb:))
 #+end_src
+
+Significant diversions/additions from LMDB conventions are:
+
+* Return values and errors
+
+LMDB returns integer error codes from most of its functions to
+indicate the success or failure of the operations (1). Important result
+values are stored in the provided value pointers (2).
+
+Neither of these is Lispy enough for this library.
+- Success or failure of the operation (1) is managed by throwing
+  errors. For failure, at least. Otherwise it returns ~#t~, where no
+  other return value fits better.
+- Non-~#t~ return values (2) are semantic—for operations that result
+  in some value, Scheme procedure for it returns a meaningful
+  value. For key/value functions, it's usually ~val~ objects.
+
+* Special type: ~val~
+
+Most of LMDB key/value operations work with ~MDB_val~ objects, passing
+them as keys and storing the needed data in them. Scheme API provides
+a convenient wrapper: ~val~. It's a full-blown object that wraps a
+~MDB_val~ pointer. Operations that ~val~ supports are:
+- ~val?~ to test for ~val~-ness.
+- ~(make-val contents [size])~ to construct a new one. It accepts
+  - Strings.
+  - Pointers.
+  - Byte vectors.
+  - In most cases, the size of the data is computed from the contents.
+    - Except for the pointer case. For that, pass the size of the data
+      explicitly.
+- ~val-size~ to know of data size.
+- ~val-data~ to return data pointer.
+  - ~val-data-string~ to get a string value for it.
+  - ~val-data-bv~ to get a byte vector~
+  - ~(val-data-parse val types)~ to parse the data as a C structure, i.e.
+#+begin_src scheme
+;; Parse as four floats
+(val-data-parse data (list float float float float))
+#+end_src
+
+* Another special type: ~stat~
+
+This is for statistics APIs: ~dbi-stat~ and ~env-stat~. These return a
+~stat-object~. You can use ~stat-depth~, ~stat-entries~, and
+~stat-pages~ to retrieve the statistics data.
