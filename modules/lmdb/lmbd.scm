@@ -102,7 +102,7 @@
 (define liblmdb (load-foreign-library "liblmdb.so"))
 ;; (define liblmdb (load-foreign-library "/home/aartaka/.guix-profile/lib/liblmdb.so"))
 
-(define (foreign-fn name args return-type)
+(define* (foreign-fn name args #:optional (return-type int))
   "Generate `foreign-library-function' from a shorter form."
   (foreign-library-function
    liblmdb name
@@ -168,10 +168,10 @@
 (define* (env-create #:optional (maxdbs 1))
   "Make a new env and set the maxdbs number (it's mandatory)."
   (let ((ptr (alloc-ptr)))
-    (check-error ((foreign-fn "mdb_env_create" '(*) int) ptr))
+    (check-error ((foreign-fn "mdb_env_create" '(*)) ptr))
     ;; FIXME: `check-error' fails here.
     (check-error
-     ((foreign-fn "mdb_env_set_maxdbs" `(* ,unsigned-int) int)
+     ((foreign-fn "mdb_env_set_maxdbs" `(* ,unsigned-int))
       (dereference-pointer ptr) maxdbs))
     (dereference-pointer ptr)))
 
@@ -180,7 +180,7 @@
   (unless (file-exists? path)
     (mkdir path))
   (check-error
-   ((foreign-fn "mdb_env_open" `(* * ,unsigned-int ,unsigned-int) int)
+   ((foreign-fn "mdb_env_open" `(* * ,unsigned-int ,unsigned-int))
     env (string->pointer path) flags mode)))
 (define (env-close env)
   ((foreign-fn "mdb_env_close" '(*) void) env))
@@ -191,14 +191,14 @@ Useful to manage several PATHs with env copies at once."
     (mkdir path))
   (check-error
    (if flags
-       ((foreign-fn "mdb_env_copy2" `(* * ,unsigned-int) int)
+       ((foreign-fn "mdb_env_copy2" `(* * ,unsigned-int))
         env (string->pointer path) flags)
-       ((foreign-fn "mdb_env_copy" '(* *) int)
+       ((foreign-fn "mdb_env_copy" '(* *))
         env (string->pointer path)))))
 
 (define* (txn-begin env #:optional (flags 0) (parent %null-pointer))
   (let ((ptr (alloc-ptr)))
-    (check-error ((foreign-fn "mdb_txn_begin" `(* * ,unsigned-int *) int)
+    (check-error ((foreign-fn "mdb_txn_begin" `(* * ,unsigned-int *))
                   env parent flags ptr))
     (dereference-pointer ptr)))
 (define (txn-abort txn)
@@ -206,9 +206,9 @@ Useful to manage several PATHs with env copies at once."
 (define (txn-reset txn)
   ((foreign-fn "mdb_txn_reset" `(*) void) txn))
 (define (txn-commit txn)
-  (check-error ((foreign-fn "mdb_txn_commit" `(*) int) txn)))
+  (check-error ((foreign-fn "mdb_txn_commit" `(*)) txn)))
 (define (txn-renew txn)
-  (check-error ((foreign-fn "mdb_txn_renew" `(*) int) txn)))
+  (check-error ((foreign-fn "mdb_txn_renew" `(*)) txn)))
 
 (define-wrapped-pointer-type val
   val?
@@ -277,7 +277,7 @@ pointer. You have to explicitly provide the size for the pointer."
   "Create a new DBI and return it."
   (let ((ptr (alloc-ptr (sizeof unsigned-int))))
     ;; FIXME: DBI is not a pointer, but rather unsigned-int.
-    (check-error ((foreign-fn "mdb_dbi_open" `(* * ,unsigned-int *) int)
+    (check-error ((foreign-fn "mdb_dbi_open" `(* * ,unsigned-int *))
                   txn (if name
                           (string->pointer name)
                           %null-pointer)
@@ -293,13 +293,13 @@ pointer. You have to explicitly provide the size for the pointer."
   "Get the val for the KEY (anything that `make-val' accepts)."
   (let* ((data-ptr (unwrap-val (make-val))))
     (check-error
-     ((foreign-fn "mdb_get" `(* ,unsigned-int * *) int)
+     ((foreign-fn "mdb_get" `(* ,unsigned-int * *))
       txn dbi (unwrap-val (make-val key)) data-ptr))
     (wrap-val data-ptr)))
 (define* (put txn dbi key data #:optional (flags 0))
   "Put DATA (anything `make-val`-able) under key (ditto)."
   (check-error
-   ((foreign-fn "mdb_put" `(* ,unsigned-int * * ,unsigned-int) int)
+   ((foreign-fn "mdb_put" `(* ,unsigned-int * * ,unsigned-int))
     txn dbi
     (unwrap-val (make-val key))
     (unwrap-val (make-val data))
@@ -307,7 +307,7 @@ pointer. You have to explicitly provide the size for the pointer."
 (define* (del txn dbi key #:optional (data #f))
   "Remove the DATA under KEY."
   (check-error
-   ((foreign-fn "mdb_del" `(* ,unsigned-int * *) int)
+   ((foreign-fn "mdb_del" `(* ,unsigned-int * *))
     txn dbi
     (unwrap-val (make-val key))
     (unwrap-val (make-val data)))))
@@ -316,7 +316,7 @@ pointer. You have to explicitly provide the size for the pointer."
   "Open a new cursor and return it."
   (let ((cursor-ptr (alloc-ptr)))
     (check-error
-     ((foreign-fn "mdb_cursor_open" `(* ,unsigned-int *) int)
+     ((foreign-fn "mdb_cursor_open" `(* ,unsigned-int *))
       txn dbi cursor-ptr))
     (dereference-pointer cursor-ptr)))
 (define (cursor-close cursor)
@@ -332,7 +332,7 @@ val objects."
          (data (make-val))
          (data-ptr (unwrap-val data)))
     (check-error
-     ((foreign-fn "mdb_cursor_get" `(* * * ,int) int)
+     ((foreign-fn "mdb_cursor_get" `(* * * ,int))
       cursor key-ptr data-ptr op))
     (list key data)))
 (define (cursor-first cursor)
@@ -345,11 +345,11 @@ val objects."
   (let* ((key  (unwrap-val (make-val key)))
          (data (unwrap-val (make-val val))))
     (check-error
-     ((foreign-fn "mdb_cursor_put" `(* * * ,unsigned-int) int)
+     ((foreign-fn "mdb_cursor_put" `(* * * ,unsigned-int))
       cursor key data flags))))
 (define* (cursor-del cursor #:optional (flags 0))
   (check-error
-   ((foreign-fn "mdb_cursor_del" `(* ,unsigned-int) int)
+   ((foreign-fn "mdb_cursor_del" `(* ,unsigned-int))
     cursor)))
 
 (define (call-with-cursor txn dbi thunk)
@@ -401,14 +401,14 @@ throwing errors."
 (define (dbi-stat txn dbi)
   (let ((stat (make-stat)))
     (check-error
-     ((foreign-fn "mdb_stat" `(* ,unsigned-int *) int)
+     ((foreign-fn "mdb_stat" `(* ,unsigned-int *))
       txn dbi (unwrap-stat stat)))
     stat))
 
 (define (env-stat env)
   (let ((stat (make-stat)))
     (check-error
-     ((foreign-fn "mdb_env_stat" `(* *) int)
+     ((foreign-fn "mdb_env_stat" `(* *))
       env (unwrap-stat stat)))
     stat))
 
