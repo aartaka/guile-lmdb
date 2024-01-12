@@ -17,13 +17,15 @@ A simple listing for all the keys and values in the db might look like
   (call-with-env-and-txn
    "path-to-db-dir/"
    (lambda (env txn)
-     (let* ((dbi (dbi-open txn #f 0))
-            (cursor (cursor-open txn dbi)))
-       (for-cursor
-        cursor
-        (lambda (key data)
-          (display (val-data-parse key (list int8 long)))
-          (display (val-data-parse data (list float float float float))))))))
+     (let ((dbi (dbi-open txn #f 0)))
+       (call-with-cursor
+        txn dbi
+        (lambda (cursor)
+          (for-cursor
+           cursor
+           (lambda (key data)
+             (display (val-data-parse key (list int8 long)))
+             (display (val-data-parse data (list float float float float))))))))))
 #+end_src
 
 ~call-with-env-and-txn~ and ~for-cursor~ are two procedures optimizing
