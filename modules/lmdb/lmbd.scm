@@ -352,6 +352,12 @@ val objects."
    ((foreign-fn "mdb_cursor_del" `(* ,unsigned-int) int)
     cursor)))
 
+(define (call-with-cursor txn dbi thunk)
+  "Call thunk with the cursor established from TXN and DBI."
+  (let ((cursor (cursor-open txn dbi)))
+    (thunk cursor)
+    (cursor-close cursor)))
+
 (define (for-cursor cursor thunk)
   "Walk the CURSOR, calling THUNK with entry keys and values (val-s).
 Stops at the last item.
