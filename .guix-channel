@@ -1,0 +1,9 @@
+;; This file lets us present this repo as a Guix channel.
+
+(channel
+  (version 0)
+  (directory ".guix")
+  (dependencies
+   (channel
+    (name guile-lmdb)
+    (url "https://github.com/aartaka/guile-lmdb"))))
