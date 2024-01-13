@@ -1,15 +1,18 @@
-(use-modules
- (gnu packages guile)
- (gnu packages databases)
- (guix packages)
- (guix gexp)
- (guix build-system guile)
- ((guix licenses) #:prefix license:))
+(define-module (guile-lmdb)
+ #:use-module (gnu packages guile)
+ #:use-module (gnu packages databases)
+ #:use-module (guix packages)
+ #:use-module (guix gexp)
+ #:use-module (guix build-system guile)
+ #:use-module (guix git-download)
+ #:use-module ((guix licenses) #:prefix license:))
 
 (package
  (name "guile-lmdb")
  (version "0.0.1")
- (source (local-file (dirname (current-filename)) #:recursive? #t))
+ (source (local-file (dirname (current-filename))
+                     #:recursive? #t
+                     #:select? (git-predicate (dirname (current-source-directory)))))
  (build-system guile-build-system)
  (native-inputs (list guile-3.0))
  (inputs (list guile-3.0 lmdb))

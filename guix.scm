@@ -1,1 +1,1 @@
-.guix/modules/guile-package.scm
+.guix/modules/guile-lmdb-package.scm
