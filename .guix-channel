@@ -2,8 +2,4 @@
 
 (channel
   (version 0)
-  (directory ".guix")
-  (dependencies
-   (channel
-    (name guile-lmdb)
-    (url "https://github.com/aartaka/guile-lmdb"))))
+  (directory ".guix"))
