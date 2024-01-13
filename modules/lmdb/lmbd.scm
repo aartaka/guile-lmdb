@@ -97,6 +97,7 @@
             dbi-stat
             env-stat
             ;; Helpers
+            call-with-cursor
             call-with-env-and-txn))
 
 (define liblmdb (load-foreign-library "liblmdb.so"))
