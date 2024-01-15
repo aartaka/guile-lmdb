@@ -29,6 +29,6 @@ Several conveniences are added on top:
 @item @code{val} and @code{stat} types.
 @item Error signaling instead of integer return values.
 @end itemize\n")
-   (license license:bsd-2)))
+   (license license:gpl3+)))
 
 guile-lmdb
