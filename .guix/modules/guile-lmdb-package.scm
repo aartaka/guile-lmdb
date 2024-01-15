@@ -1,4 +1,4 @@
-(define-module (guile-lmdb)
+(define-module (guile-lmdb-package)
  #:use-module (gnu packages guile)
  #:use-module (gnu packages databases)
  #:use-module (guix packages)
