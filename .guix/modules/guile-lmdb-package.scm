@@ -28,7 +28,16 @@
                   (add-after 'unpack 'remove-channel-file
                     (lambda _
                       (delete-file ".guix/modules/guile-lmdb-package.scm")
-                      #t)))))
+                      #t))
+                  (add-before 'build 'substitute
+                    (lambda* (#:key inputs #:allow-other-keys)
+                      (let ((lmdb (string-append (assoc-ref inputs "lmdb")
+                                                 "/lib/liblmdb.so")))
+                        (substitute*
+                         '("modules/lmdb/lmdb.scm")
+                         (("liblmdb.so")
+                          lmdb))
+                        #t))))))
     (native-inputs (list guile-3.0))
     (inputs (list guile-3.0 lmdb))
     (home-page "https://github.com/aartaka/guile-lmdb")
