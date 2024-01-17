@@ -14,18 +14,18 @@ lenient. Thus
 
 A simple listing for all the keys and values in the db might look like
 #+begin_src scheme
-  (call-with-env-and-txn
+  (mdb:call-with-env-and-txn
    "path-to-db-dir/"
    (lambda (env txn)
-     (let ((dbi (dbi-open txn #f 0)))
-       (call-with-cursor
+     (let ((dbi (mdb:dbi-open txn #f 0)))
+       (mdb:call-with-cursor
         txn dbi
         (lambda (cursor)
-          (for-cursor
+          (mdb:for-cursor
            cursor
            (lambda (key data)
-             (display (val-data-parse key (list int8 long)))
-             (display (val-data-parse data (list float float float float))))))))))
+             (display (mdb:val-data-parse key (list int8 long)))
+             (display (mdb:val-data-parse data (list float float float float))))))))))
 #+end_src
 
 ~call-with-env-and-txn~ and ~for-cursor~ are two procedures optimizing
@@ -42,7 +42,7 @@ is ~env-create~. This might be problematic, because some of the names
 codebase. Thus, it's better to use this library with a prefix to avoid
 nasty namespace errors.
 #+begin_src scheme
-(use-modules ((lmdb) #:prefix mdb:))
+(use-modules ((lmdb lmdb) #:prefix mdb:))
 #+end_src
 
 Significant diversions/additions from LMDB conventions are:
