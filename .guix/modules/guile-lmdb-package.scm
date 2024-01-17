@@ -20,7 +20,12 @@
                                       (const #t))))
     (build-system guile-build-system)
     (arguments
-     '(#:source-directory "modules"))
+     '(#:source-directory "modules"
+       #:phases (modify-phases %standard-phases
+                  (add-after 'unpack 'remove-channel-file
+                    (lambda _
+                      (delete-file ".guix/modules/guile-lmdb-package.scm")
+                      #t)))))
     (native-inputs (list guile-3.0))
     (inputs (list guile-3.0 lmdb))
     (home-page "https://github.com/aartaka/guile-lmdb")
