@@ -8,12 +8,6 @@
  #:use-module (guix git-download)
  #:use-module ((guix licenses) #:prefix license:))
 
-(define (non-guix-git-files dir)
-  (lambda* (file #:rest args)
-    (and (not (string-contains file ".guix"))
-         (not (string-contains file "guix.scm"))
-         (apply (git-predicate dir) file args))))
-
 (define-public guile-lmdb
   (package
     (name "guile-lmdb")
