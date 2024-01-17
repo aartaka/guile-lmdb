@@ -8,19 +8,30 @@
  #:use-module (guix git-download)
  #:use-module ((guix licenses) #:prefix license:))
 
+(define (non-guix-git-files dir)
+  (lambda* (file #:rest args)
+    (and (not (string-contains file ".guix"))
+         (not (string-contains file "guix.scm"))
+         (apply (git-predicate dir) file args))))
+
 (define-public guile-lmdb
   (package
-   (name "guile-lmdb")
-   (version "0.0.1")
-   (source (local-file (dirname (current-filename))
-                       #:recursive? #t
-                       #:select? (git-predicate (dirname (current-source-directory)))))
-   (build-system guile-build-system)
-   (native-inputs (list guile-3.0))
-   (inputs (list guile-3.0 lmdb))
-   (home-page "https://github.com/aartaka/guile-lmdb")
-   (synopsis "Bindings for LMDB (Lightning Memory-Mapped Database) in Guile.")
-   (description "Scheme wrapper around liblmdb.so.
+    (name "guile-lmdb")
+    (version "0.0.1")
+    (source (local-file (dirname (dirname (current-source-directory)))
+                        #:recursive? #t
+                        #:select? (or (git-predicate
+                                       (dirname
+                                        (dirname (current-source-directory))))
+                                      (const #t))))
+    (build-system guile-build-system)
+    (arguments
+     '(#:source-directory "modules"))
+    (native-inputs (list guile-3.0))
+    (inputs (list guile-3.0 lmdb))
+    (home-page "https://github.com/aartaka/guile-lmdb")
+    (synopsis "Bindings for LMDB (Lightning Memory-Mapped Database) in Guile.")
+    (description "Scheme wrapper around liblmdb.so.
 Most name are the same as LMDB ones, except for prefix absence.
 Several conveniences are added on top:
 @itemize
@@ -29,6 +40,6 @@ Several conveniences are added on top:
 @item @code{val} and @code{stat} types.
 @item Error signaling instead of integer return values.
 @end itemize\n")
-   (license license:gpl3+)))
+    (license license:gpl3+)))
 
 guile-lmdb
