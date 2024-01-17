@@ -14,6 +14,8 @@ lenient. Thus
 
 A simple listing for all the keys and values in the db might look like
 #+begin_src scheme
+  (use-modules (system foreign))
+  (use-modules ((lmdb lmdb) #:prefix mdb:))
   (mdb:call-with-env-and-txn
    "path-to-db-dir/"
    (lambda (env txn)
