@@ -12,12 +12,15 @@
   (package
     (name "guile-lmdb")
     (version "0.0.1")
-    (source (local-file (dirname (dirname (current-source-directory)))
-                        #:recursive? #t
-                        #:select? (or (git-predicate
-                                       (dirname
-                                        (dirname (current-source-directory))))
-                                      (const #t))))
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                     (url "https://github.com/aartaka/guile-lmdb")
+                     (commit "2b5915bd56216716d679913835b67502e9307eec")))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "1x90dp0g8vm4x3s0qxjj4g9vvki3d7yc8pwj4p30pf55lkrd3idm"))))
     (build-system guile-build-system)
     (arguments
      '(#:source-directory "modules"
