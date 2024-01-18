@@ -3,8 +3,8 @@
 This allows to interact with LMDB in Guile. The focus of the library
 is making an otherwise unforgiving LMDB C API more Scheme-ish and
 lenient. Thus
-- Values can be anything: strings, bytevectors, or wrapped ~val~
-  objects.
+- Values can be anything: strings, bytevectors, or ~val~ objects
+  vrapping arbitrary pointers.
 - All the error codes are prettily displayed via Guile ~error~,
   preventing the further operations on error.
 - Lots of optional arguments for (opinionated) non-mandatory
