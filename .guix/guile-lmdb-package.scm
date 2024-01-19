@@ -8,13 +8,6 @@
  #:use-module (guix git-download)
  #:use-module ((guix licenses) #:prefix license:))
 
-(define (ignore-package-predicate dirname)
-  (lambda* (file #:rest args)
-    (or (and (git-predicate dirname)
-             (apply (git-predicate dirname) file args))
-        (const #t))
-    (not (string-prefix? ".guix/" file))))
-
 (define-public guile-lmdb
   (package
     (name "guile-lmdb")
@@ -22,8 +15,8 @@
     (source (local-file ".."
                         "guile-lmdb-checkout"
                         #:recursive? #t
-                        #:select? (ignore-package-predicate
-                                   (dirname (current-source-directory)))))
+                        #:select? (or (git-predicate (dirname (current-source-directory)))
+                                      (const #t))))
     (build-system guile-build-system)
     (arguments
      '(#:source-directory "modules"
