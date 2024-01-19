@@ -8,16 +8,22 @@
  #:use-module (guix git-download)
  #:use-module ((guix licenses) #:prefix license:))
 
+(define (ignore-package-predicate dirname)
+  (lambda* (file #:rest args)
+    (or (and (git-predicate dirname)
+             (apply (git-predicate dirname) file args))
+        (const #t))
+    (not (string-prefix? ".guix/" file))))
+
 (define-public guile-lmdb
   (package
     (name "guile-lmdb")
     (version "0.0.1")
-    (source (local-file "../.."
+    (source (local-file ".."
                         "guile-lmdb-checkout"
                         #:recursive? #t
-                        #:select? (or (git-predicate (dirname (dirname (current-source-directory))))
-                                      (lambda* (file #:rest args)
-                                        (not (string-prefix? ".guix/" file))))))
+                        #:select? (ignore-package-predicate
+                                   (dirname (current-source-directory)))))
     (build-system guile-build-system)
     (arguments
      '(#:source-directory "modules"
@@ -27,9 +33,9 @@
                       (let ((lmdb (string-append (assoc-ref inputs "lmdb")
                                                  "/lib/liblmdb.so")))
                         (substitute*
-                         '("modules/lmdb/lmdb.scm")
-                         (("liblmdb.so")
-                          lmdb))
+                            '("modules/lmdb/lmdb.scm")
+                          (("liblmdb.so")
+                           lmdb))
                         #t))))))
     (native-inputs (list guile-3.0))
     (inputs (list guile-3.0 lmdb))
