@@ -26,7 +26,7 @@ A simple listing for all the keys and values in the db might look like
           (mdb:for-cursor
            cursor
            (lambda (key data)
-             (display (mdb:val-data-parse key (list int8 long)))
+             (display (mdb:val-data-string key))
              (display (mdb:val-data-parse data (list float float float float))))))))))
 #+end_src
 
