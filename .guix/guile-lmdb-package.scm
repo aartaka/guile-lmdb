@@ -12,24 +12,17 @@
   (package
     (name "guile-lmdb")
     (version "0.0.1")
-    (source (origin
-              (method git-fetch)
-              (uri (git-reference
-                     (url "https://github.com/aartaka/guile-lmdb")
-                     (commit "2b5915bd56216716d679913835b67502e9307eec")))
-              (file-name (git-file-name name version))
-              (sha256
-               (base32
-                "1x90dp0g8vm4x3s0qxjj4g9vvki3d7yc8pwj4p30pf55lkrd3idm"))))
+    (source (local-file "../.."
+                        "gile-lmdb-checkout"
+                        #:recursive? #t
+                        #:select? (or (git-predicate (dirname (dirname (current-source-directory))))
+                                      (lambda* (file #:rest args)
+                                        (not (string-prefix? ".guix/" file))))))
     (build-system guile-build-system)
     (arguments
      '(#:source-directory "modules"
        #:phases (modify-phases %standard-phases
-                  (add-after 'unpack 'remove-channel-file
-                    (lambda _
-                      (delete-file ".guix/modules/guile-lmdb-package.scm")
-                      #t))
-                  (add-before 'build 'substitute
+                  (add-before 'build 'substitute-lmdb-so
                     (lambda* (#:key inputs #:allow-other-keys)
                       (let ((lmdb (string-append (assoc-ref inputs "lmdb")
                                                  "/lib/liblmdb.so")))
