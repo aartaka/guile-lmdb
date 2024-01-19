@@ -1,1 +1,1 @@
-.guix/modules/guile-lmdb-package.scm
+/home/aartaka/git/guile-lmdb/.guix/guile-lmdb-package.scm
