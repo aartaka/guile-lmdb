@@ -13,7 +13,7 @@
     (name "guile-lmdb")
     (version "0.0.1")
     (source (local-file "../.."
-                        "gile-lmdb-checkout"
+                        "guile-lmdb-checkout"
                         #:recursive? #t
                         #:select? (or (git-predicate (dirname (dirname (current-source-directory))))
                                       (lambda* (file #:rest args)
