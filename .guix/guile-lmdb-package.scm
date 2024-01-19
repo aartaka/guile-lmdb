@@ -39,8 +39,8 @@
 Most name are the same as LMDB ones, except for prefix absence.
 Several conveniences are added on top:
 @itemize
+@item @code{call-with-env-and-txn} and @code{call-with-cursor} wrappers.
 @item @code{for-cursor} procedure for cursor iteration.
-@item @code{call-with-env-and-txn} wrapper.
 @item @code{val} and @code{stat} types.
 @item Error signaling instead of integer return values.
 @end itemize\n")
