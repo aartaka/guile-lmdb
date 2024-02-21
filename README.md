@@ -6,9 +6,9 @@ The focus of the library is making an otherwise unforgiving LMDB C API
 more Scheme-ish and lenient.
 Thus
 
-<UL><li> Values can be anything: strings, bytevectors, or ~val~ objects
+<UL><li> Values can be anything: strings, bytevectors, or <code>val</code> objects
   wrapping arbitrary pointers.
- <li> All the error codes are prettily displayed via Guile ~error~,
+ <li> All the error codes are prettily displayed via Guile <code>error</code>,
   preventing the further operations on error.
  <li> Lots of optional arguments for (opinionated) non-mandatory
   arguments.
@@ -64,7 +64,7 @@ values are stored in the provided value pointers (2).
 Neither of these is Lispy enough for this library.
 
 <UL><li> Success or failure of the operation (1) is managed by throwing
-  errors. For failure, at least. Otherwise it returns ~#t~, where no
+  errors. For failure, at least. Otherwise it returns <code>&num;t</code>, where no
   other return value fits better.
  <li> Non-<code>&num;t</code> return values (2) are semantic—for operations that result
   in some value, Scheme procedure for it returns a meaningful
@@ -80,7 +80,7 @@ them as keys and storing the needed data in them. Scheme API provides
 a convenient wrapper: <code>val</code>. It's a full-blown object that wraps a
 <code>MDB_val</code> pointer. Operations that <code>val</code> supports are:
 
-<DL><dt> val? </dt> <dd> o test for <code>val</code>-ness.
+<DL><dt> val? </dt> <dd> to test for <code>val</code>-ness.
 <dt> (make-val contents [size]) </dt> <dd>
  to construct a new one. It accepts
  <UL><li> Strings.
@@ -90,7 +90,7 @@ a convenient wrapper: <code>val</code>. It's a full-blown object that wraps a
     <UL><li> Except for the pointer case. For that, pass the size of the data explicitly.
     </UL>
  </UL>
-<dt> val-size </dt> <dd> to know of data size.
+<dt> val-size </dt> <dd> to know the size of data within.
 <dt> val-data </dt> <dd> to return data pointer.
 <dt> val-data-string </dt> <dd> to get a string value for it.
 <dt> val-data-bv </dt> <dd> to get a byte vector
@@ -103,7 +103,7 @@ a convenient wrapper: <code>val</code>. It's a full-blown object that wraps a
 </SECTION> <SECTION id=stat><h2><a href=#stat>Another special type: <code>stat</code></a></h2>
 
 <p>
-This is for statistics APIs: <code>dbi-stat</code> and <code>env-stat</code>. These return a
+This is for DB statistics APIs: <code>dbi-stat</code> and <code>env-stat</code>. These return a
 <code>stat-object</code>. You can use <code>stat-depth</code>, <code>stat-entries</code>, and
 <code>stat-pages</code> to retrieve the statistics data.
 
