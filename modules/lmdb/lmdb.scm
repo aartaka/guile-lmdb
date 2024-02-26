@@ -85,6 +85,7 @@
             cursor-get
             cursor-first
             cursor-next
+            cursor-last
             cursor-put
             cursor-del
             for-cursor
