@@ -99,7 +99,10 @@
             env-stat
             ;; Helpers
             call-with-cursor
-            call-with-env-and-txn))
+            call-with-env-and-txn
+            ;; Macro helpers
+            with-cursor
+            with-env-and-txn))
 
 (define liblmdb (load-foreign-library "liblmdb.so"))
 ;; (define liblmdb (load-foreign-library "/home/aartaka/.guix-profile/lib/liblmdb.so"))
@@ -371,6 +374,13 @@ val objects."
     (thunk cursor)
     (cursor-close cursor)))
 
+(define-syntax-rule (with-cursor txn dbi (cursor) body ...)
+  "Run BODY with CURSOR bound to the cursor at TXN/DBI."
+  (call-with-cursor
+   txn dbi
+   (lambda (cursor)
+     body ...)))
+
 (define (for-cursor cursor thunk)
   "Walk the CURSOR, calling THUNK with entry keys and values (val-s).
 Stops at the last item.
@@ -435,3 +445,12 @@ Commit the transaction and close the env aftwerwards."
       (thunk env txn)
       (txn-commit txn))
     (env-close env)))
+
+(define-syntax-rule (with-env-and-txn path (env txn args ...) body ...)
+  "Run BODY with ENV and TXN bound to meaningful values.
+ENV is open at PATH and created with ARGS."
+  (call-with-env-and-txn
+   path
+   (lambda (env txn)
+     body ...)
+   args ...))

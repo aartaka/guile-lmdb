@@ -19,18 +19,14 @@ A simple listing for all the keys and values in the db might look like
 ``` scheme
 (use-modules (system foreign))
 (use-modules ((lmdb lmdb) #:prefix mdb:))
-(mdb:call-with-env-and-txn
- "path-to-db-dir/"
- (lambda (env txn)
-   (let ((dbi (mdb:dbi-open txn #f 0)))
-     (mdb:call-with-cursor
-      txn dbi
-      (lambda (cursor)
-        (mdb:for-cursor
-         cursor
-         (lambda (key data)
-           (display (mdb:val-data-string key))
-           (display (mdb:val-data-parse data (list float float float float))))))))))
+(mdb:with-env-and-txn "path-to-db-dir/" (env txn)
+ (let ((dbi (mdb:dbi-open txn #f 0)))
+   (mdb:with-cursor txn dbi (cursor)
+    (mdb:for-cursor
+     cursor
+     (lambda (key data)
+       (display (mdb:val-data-string key))
+       (display (mdb:val-data-parse data (list float float float float))))))))
 ```
 
 `call-with-env-and-txn` and `for-cursor` are two procedures optimizing
