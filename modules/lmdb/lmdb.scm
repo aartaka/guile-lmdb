@@ -370,9 +370,10 @@ val objects."
 
 (define (call-with-cursor txn dbi thunk)
   "Call thunk with the cursor established from TXN and DBI."
-  (let ((cursor (cursor-open txn dbi)))
-    (thunk cursor)
-    (cursor-close cursor)))
+  (let* ((cursor (cursor-open txn dbi))
+         (result (thunk cursor)))
+    (cursor-close cursor)
+    result))
 
 (define-syntax-rule (with-cursor txn dbi (cursor) body ...)
   "Run BODY with CURSOR bound to the cursor at TXN/DBI."
@@ -441,10 +442,11 @@ Run THUNK with this environment and a new transaction on it.
 Commit the transaction and close the env aftwerwards."
   (let ((env (apply env-create args)))
     (env-open env path)
-    (let ((txn (txn-begin env)))
-      (thunk env txn)
-      (txn-commit txn))
-    (env-close env)))
+    (let* ((txn (txn-begin env))
+           (result (thunk env txn)))
+      (txn-commit txn)
+      (env-close env)
+      result)))
 
 (define-syntax-rule (with-env-and-txn (path args ...) (env txn) body ...)
   "Run BODY with ENV and TXN bound to meaningful values.
