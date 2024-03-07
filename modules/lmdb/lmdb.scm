@@ -446,7 +446,7 @@ Commit the transaction and close the env aftwerwards."
       (txn-commit txn))
     (env-close env)))
 
-(define-syntax-rule (with-env-and-txn path (env txn args ...) body ...)
+(define-syntax-rule (with-env-and-txn (path args ...) (env txn) body ...)
   "Run BODY with ENV and TXN bound to meaningful values.
 ENV is open at PATH and created with ARGS."
   (call-with-env-and-txn

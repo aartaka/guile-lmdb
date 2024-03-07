@@ -19,7 +19,7 @@ A simple listing for all the keys and values in the db might look like
 ``` scheme
 (use-modules (system foreign))
 (use-modules ((lmdb lmdb) #:prefix mdb:))
-(mdb:with-env-and-txn "path-to-db-dir/" (env txn)
+(mdb:with-env-and-txn ("path-to-db-dir/") (env txn)
  (let ((dbi (mdb:dbi-open txn #f 0)))
    (mdb:with-cursor txn dbi (cursor)
     (mdb:for-cursor
