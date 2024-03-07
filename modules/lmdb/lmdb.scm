@@ -425,11 +425,11 @@ throwing errors."
       env (unwrap-stat stat)))
     stat))
 
-(define (call-with-env-and-txn path thunk)
-  "Create environment and open PATH in it.
+(define* (call-with-env-and-txn path thunk #:rest args)
+  "Create the environment (with ARGS) and open PATH in it.
 Run THUNK with this environment and a new transaction on it.
 Commit the transaction and close the env aftwerwards."
-  (let ((env (env-create)))
+  (let ((env (apply env-create args)))
     (env-open env path)
     (let ((txn (txn-begin env)))
       (thunk env txn)
