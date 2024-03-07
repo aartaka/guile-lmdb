@@ -167,14 +167,22 @@
       #t
       (error (pointer->string ((foreign-fn "mdb_strerror" (list int) '*) err)))))
 
-(define* (env-create #:optional (maxdbs 1))
-  "Make a new env and set the maxdbs number (it's mandatory)."
+(define* (env-create #:key (maxdbs 1) maxreaders mapsize)
+  "Make a new env and set the MAXDBS number (or 1)—maxdb number is mandatory.
+Also set MAXREADERS and MAPSIZE, when provided."
   (let ((ptr (alloc-ptr)))
     (check-error ((foreign-fn "mdb_env_create" '(*)) ptr))
-    ;; FIXME: `check-error' fails here.
     (check-error
      ((foreign-fn "mdb_env_set_maxdbs" `(* ,unsigned-int))
       (dereference-pointer ptr) maxdbs))
+    (when mapsize
+      (check-error
+       ((foreign-fn "mdb_env_set_mapsize" `(* ,size_t))
+        (dereference-pointer ptr) mapsize)))
+    (when maxreaders
+      (check-error
+       ((foreign-fn "mdb_env_set_maxreaders" `(* ,unsigned-int))
+        (dereference-pointer ptr) maxreaders)))
     (dereference-pointer ptr)))
 
 (define* (env-open env path #:optional (flags 0) (mode #o777))
