@@ -184,6 +184,7 @@ Also set MAXREADERS and MAPSIZE, when provided."
        ((foreign-fn "mdb_env_set_maxreaders" `(* ,unsigned-int))
         (dereference-pointer ptr) maxreaders)))
     (dereference-pointer ptr)))
+(define make-env env-create)
 
 (define* (env-open env path #:optional (flags 0) (mode #o777))
   "Open the ENV at the PATH, creating the PATH if necessary."
@@ -314,6 +315,7 @@ pointer. You have to explicitly provide the size for the pointer."
     (unwrap-val (make-val key))
     (unwrap-val (make-val data))
     flags)))
+(define put! put)
 (define* (del txn dbi key #:optional (data #f))
   "Remove the DATA under KEY."
   (check-error
@@ -321,6 +323,7 @@ pointer. You have to explicitly provide the size for the pointer."
     txn dbi
     (unwrap-val (make-val key))
     (unwrap-val (make-val data)))))
+(define del! del)
 
 (define (cursor-open txn dbi)
   "Open a new cursor and return it."
