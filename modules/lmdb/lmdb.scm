@@ -139,6 +139,7 @@
 (define +create+ #x40000)
 ;; Write flags
 (define +nooverwrite+ #x10)
+(define +nodupdata+ #x20)
 (define +noodupdata+ #x20)
 (define +current+ #x40)
 (define +reserve+ #x10000)
