@@ -1,3 +1,5 @@
+;; Run with
+;; guile --debug -L . test/test.scm
 (define-module (lmdb tests)
   #:use-module (srfi srfi-64)
   #:use-module (srfi srfi-1)
