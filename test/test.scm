@@ -6,7 +6,7 @@
   #:use-module ((lmdb lmdb) #:prefix mdb:))
 
 (test-begin "env-create")
-(define env (mdb:env-create 10))
+(define env (mdb:env-create #:maxdbs 10))
 (test-assert env)
 (test-end "env-create")
 
