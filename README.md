@@ -104,3 +104,23 @@ return a `stat-object`. You can use `stat-depth`, `stat-entries`, and
 Most of the non-obvious functions/variables in the library are heavily
 documented, so refer to their documentation via Guile built-in
 facilities.
+``` scheme
+;; Find a function/value by name
+,apropos cursor
+(guile): char-set-cursor-next	#<procedure char-set-cursor-next (_ _)>
+(guile): char-set-cursor	#<procedure char-set-cursor (_)>
+(lmdb lmdb): mdb:cursor-open	#<procedure cursor-open (txn dbi)>
+(lmdb lmdb): mdb:cursor-put	#<procedure cursor-put (cursor key val #:optional flags)>
+(lmdb lmdb): mdb:for-cursor	#<procedure for-cursor (cursor thunk)>
+(lmdb lmdb): mdb:call-with-cursor	#<procedure call-with-cursor (txn dbi thunk)>
+(lmdb lmdb): mdb:cursor-first	#<procedure cursor-first (cursor)>
+(lmdb lmdb): mdb:cursor-del	#<procedure cursor-del (cursor #:optional flags)>
+(lmdb lmdb): mdb:cursor-close	#<procedure cursor-close (cursor)>
+...
+;; Get the documentation for the function
+,describe mdb:for-cursor
+Walk the CURSOR, calling THUNK with entry keys and values (val-s).
+Stops at the last item.
+Requires that DB has at least one entry, otherwise meaningless and
+throwing errors.
+```
