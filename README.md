@@ -30,9 +30,10 @@ A simple listing for all the keys and values in the db might look like
        (display (mdb:val-data-parse data (list float float float float))))))))
 ```
 
-`call-with-env-and-txn` and `for-cursor` are two procedures optimizing
-the typical workflows: managing the environment+transaction; and going
-through cursor values respectively. Other parts are visibly clunkier and closer to
+`(call-)with-env-and-txn`, `(call-)with-cursor`, and `for-cursor` are
+procedures/macros optimizing the typical workflows: managing the
+environment+transaction; managing the cursor; and going through cursor
+values respectively. Other parts are visibly clunkier and closer to
 the LMDB-provided APIs.
 
 ## Compatibility with LMDB conventions
