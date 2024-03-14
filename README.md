@@ -5,8 +5,8 @@ The focus of the library is making an otherwise unforgiving LMDB C API
 more Scheme-ish and lenient.
 Thus
 
--  Values can be anything: strings, bytevectors, or <code>val</code>
-   objects wrapping arbitrary pointers.
+- Values can be anything: strings, bytevectors, or `val`
+  objects wrapping arbitrary pointers.
 - All the error codes are prettily displayed via Guile
   `error`, preventing the further operations on error.
 - Lots of optional arguments for (opinionated) non-mandatory
