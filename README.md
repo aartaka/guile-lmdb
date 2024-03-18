@@ -20,18 +20,24 @@ A simple listing for all the keys and values in the db might look like
 (use-modules (system foreign))
 (use-modules ((lmdb lmdb) #:prefix mdb:))
 
-(mdb:with-env-and-txn ("path-to-db-dir/") (env txn)
- (let ((dbi (mdb:dbi-open txn #f 0)))
-   (mdb:with-cursor txn dbi (cursor)
-    (mdb:for-cursor
-     cursor
-     (lambda (key data)
-       (display (mdb:val-data-string key))
-       (display (mdb:val-data-parse data (list float float float float))))))))
+(mdb:call-with-env-and-txn
+ "path-to-db-dir/"
+ (lambda (env txn)
+   (let ((dbi (mdb:dbi-open txn #f 0)))
+     (mdb:call-with-cursor
+      txn dbi
+      (lambda (cursor)
+        (mdb:for-cursor
+         cursor
+         (lambda (key data)
+           (display (mdb:val-data-string key))
+           (display (mdb:val-data-parse data (list float float float float)))
+           (newline))))))))
+
 ```
 
-`(call-)with-env-and-txn`, `(call-)with-cursor`, and `for-cursor` are
-procedures/macros optimizing the typical workflows: managing the
+`call-with-env-and-txn`, `call-with-cursor`, and `for-cursor` are
+procedures optimizing the typical workflows: managing the
 environment+transaction; managing the cursor; and going through cursor
 values respectively. Other parts are visibly clunkier and closer to
 the LMDB-provided APIs.
