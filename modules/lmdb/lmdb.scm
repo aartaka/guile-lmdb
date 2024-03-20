@@ -99,10 +99,7 @@
             env-stat
             ;; Helpers
             call-with-cursor
-            call-with-env-and-txn
-            ;; Macro helpers
-            with-cursor
-            with-env-and-txn))
+            call-with-env-and-txn))
 
 (define liblmdb (load-foreign-library "liblmdb.so"))
 ;; (define liblmdb (load-foreign-library "/home/aartaka/.guix-profile/lib/liblmdb.so"))
