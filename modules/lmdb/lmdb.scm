@@ -27,6 +27,7 @@
             ;; Write flags
             +nooverwrite+
             +noodupdata+
+            +nodupdata+
             +current+
             +reserve+
             +append+
