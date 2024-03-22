@@ -100,7 +100,8 @@
             env-stat
             ;; Helpers
             call-with-cursor
-            call-with-env-and-txn))
+            call-with-env-and-txn
+            call-with-wrapped-cursor))
 
 (define liblmdb (load-foreign-library "liblmdb.so"))
 ;; (define liblmdb (load-foreign-library "/home/aartaka/.guix-profile/lib/liblmdb.so"))
@@ -439,3 +440,15 @@ Commit the transaction and close the env aftwerwards."
       (txn-commit txn)
       (env-close env)
       result)))
+
+(define* (call-with-wrapped-cursor path thunk #:rest args)
+  "Run THUNK with (ENV TXN DBI CURSOR) created for it.
+ARGS and PATH are for environment creation."
+  (call-with-env-and-txn
+   path
+   (lambda (env txn)
+     (let ((dbi (dbi-open txn #f 0)))
+       (call-with-cursor
+        txn dbi
+        (lambda (cursor)
+          (thunk env txn dbi cursor)))))))
