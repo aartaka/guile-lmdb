@@ -36,11 +36,30 @@ A simple listing for all the keys and values in the db might look like
 
 ```
 
-`call-with-env-and-txn`, `call-with-cursor`, and `for-cursor` are
-procedures optimizing the typical workflows: managing the
-environment+transaction; managing the cursor; and going through cursor
-values respectively. Other parts are visibly clunkier and closer to
-the LMDB-provided APIs.
+or even
+
+``` scheme
+(use-modules (system foreign))
+(use-modules ((lmdb lmdb) #:prefix mdb:))
+
+(mdb:call-with-wrapped-cursor
+ "path-to-db-dir/"
+ (lambda (env txn dbi cursor)
+   (mdb:for-cursor
+    cursor
+    (lambda (key data)
+      (display (mdb:val-data-string key))
+      (display (mdb:val-data-parse data (list float float float float)))
+      (newline)))))
+
+```
+
+`call-with-env-and-txn`, `call-with-cursor`,
+`call-with-wrapped-cursor`, and `for-cursor` are procedures optimizing
+the typical workflows: managing the environment+transaction; managing
+the cursor; managing both; and going through cursor values
+respectively. Other parts are visibly clunkier and closer to the
+LMDB-provided APIs.
 
 ## Compatibility with LMDB conventions
 
