@@ -4,7 +4,8 @@
   #:use-module (system foreign-object)
   #:use-module (rnrs bytevectors)
   #:use-module (srfi srfi-1)
-  #:export (;; Environment flags
+  #:use-module (ice-9 exceptions)
+  #:export ( ;; Environment flags
             +fixedmap+
             +nosubdir+
             +nosync+
@@ -168,7 +169,8 @@
 (define (check-error err)
   (if (zero? err)
       #t
-      (error (pointer->string ((foreign-fn "mdb_strerror" (list int) '*) err)))))
+      (raise-exception (make-exception-with-message (pointer->string ((foreign-fn "mdb_strerror" (list int) '*) err)))
+                       #:continuable? #t)))
 
 (define* (env-create #:key (maxdbs 1) maxreaders mapsize)
   "Make a new env and set the MAXDBS number (or 1)—maxdb number is mandatory.
