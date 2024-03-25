@@ -7,8 +7,8 @@ Thus
 
 - Values can be anything: strings, bytevectors, or `val`
   objects wrapping arbitrary pointers.
-- All the error codes are prettily displayed via Guile
-  `error`, preventing the further operations on error.
+- All the error codes are prettily raised via Guile exception system,
+  preventing the further operations on error.
 - Lots of optional arguments for (opinionated) non-mandatory
   arguments.
 
@@ -57,9 +57,9 @@ or even
 `call-with-env-and-txn`, `call-with-cursor`,
 `call-with-wrapped-cursor`, and `for-cursor` are procedures optimizing
 the typical workflows: managing the environment+transaction; managing
-the cursor; managing both; and going through cursor values
-respectively. Other parts are visibly clunkier and closer to the
-LMDB-provided APIs.
+the cursor; managing both environment and cursor; and going through
+cursor values respectively. Other parts are visibly clunkier and
+closer to the LMDB-provided APIs.
 
 ## Compatibility with LMDB conventions
 
@@ -85,8 +85,8 @@ values are stored in the provided value pointers (2).
 Neither of these is Lispy enough for this library.
 
 - Success or failure of the operation (1) is managed by throwing
-  errors. For failure, at least. Otherwise it returns `#t`, where no
-  other return value fits better.
+  exceptions. For failure, at least. Otherwise it returns `#t`, where
+  no other return value fits better.
 - Non-`#t` return values (2) are semantic—for operations that result
   in some value, Scheme procedure for it returns a meaningful
   value. For key/value functions, it's usually
