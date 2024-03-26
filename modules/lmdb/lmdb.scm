@@ -389,10 +389,10 @@ throwing errors."
                           (map val-data-bv kv2)))))
     (apply thunk first-kv)
     (unless (kv-eq? first-kv last-kv)
-      (let rec ((kv (cursor-get cursor +get-next+)))
-        (apply thunk kv)
-        (unless (kv-eq? kv last-kv)
-          (rec (cursor-next cursor)))))))
+      (do ((kv (cursor-get cursor +get-next+)
+               (cursor-next cursor)))
+          ((kv-eq? kv last-kv))
+        (apply thunk kv)))))
 
 (define-wrapped-pointer-type stat
   stat?
