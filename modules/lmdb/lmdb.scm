@@ -5,6 +5,9 @@
   #:use-module (rnrs bytevectors)
   #:use-module (srfi srfi-1)
   #:use-module (ice-9 exceptions)
+  #:export-syntax (with-cursor
+                   with-env-and-txn
+                   with-wrapped-cursor)
   #:export ( ;; Environment flags
             +fixedmap+
             +nosubdir+
@@ -385,6 +388,13 @@ val objects."
     (cursor-close cursor)
     result))
 
+(define-syntax-rule (with-cursor txn dbi (cursor) body ...)
+  "Run BODY with CURSOR bound to the cursor at TXN/DBI."
+  (call-with-cursor
+   txn dbi
+   (lambda (cursor)
+     body ...)))
+
 (define (for-cursor cursor thunk)
   "Walk the CURSOR, calling THUNK with entry keys and values (val-s).
 Stops at the last item.
@@ -451,6 +461,16 @@ Commit the transaction and close the env aftwerwards."
       (env-close env)
       result)))
 
+(define-syntax-rule (with-env-and-txn (path args ...) (env txn) body ...)
+  "Run BODY with ENV and TXN bound to meaningful values.
+ENV is open at PATH and created with ARGS."
+  (call-with-env-and-txn
+   path
+   (lambda (env txn)
+     body ...)
+   args ...))
+
+
 (define* (call-with-wrapped-cursor path thunk #:rest args)
   "Run THUNK with (ENV TXN DBI CURSOR) created for it.
 ARGS and PATH are for environment creation."
@@ -462,3 +482,13 @@ ARGS and PATH are for environment creation."
         txn dbi
         (lambda (cursor)
           (thunk env txn dbi cursor)))))))
+
+(define-syntax-rule (with-wrapped-cursor (path args ...) (env txn dbi cursor) body ...)
+  "Run BODY with ENV and TXN bound to meaningful values.
+ENV is open at PATH and created with ARGS."
+  (call-with-wrapped-cursor
+   path
+   (lambda (env txn dbi cursor)
+     body ...)
+   args ...))
+
