@@ -79,8 +79,13 @@
             dbi-close
             ;; Actual ops
             get
+            ref
             put
+            put!
+            set!
             del
+            del!
+            remove!
             ;; Cursor ops
             cursor-open
             cursor-close
@@ -312,6 +317,7 @@ pointer. You have to explicitly provide the size for the pointer."
      ((foreign-fn "mdb_get" `(* ,unsigned-int * *))
       txn dbi (unwrap-val (make-val key)) data-ptr))
     (wrap-val data-ptr)))
+(define ref get)
 (define* (put txn dbi key data #:optional (flags 0))
   "Put DATA (anything `make-val`-able) under key (ditto)."
   (check-error
@@ -321,6 +327,7 @@ pointer. You have to explicitly provide the size for the pointer."
     (unwrap-val (make-val data))
     flags)))
 (define put! put)
+(define set! put)
 (define* (del txn dbi key #:optional (data #f))
   "Remove the DATA under KEY."
   (check-error
@@ -329,6 +336,7 @@ pointer. You have to explicitly provide the size for the pointer."
     (unwrap-val (make-val key))
     (unwrap-val (make-val data)))))
 (define del! del)
+(define remove! del)
 
 (define (cursor-open txn dbi)
   "Open a new cursor and return it."
