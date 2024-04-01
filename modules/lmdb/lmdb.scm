@@ -174,10 +174,11 @@
 (define +get-set-key+ 16)
 (define +get-set-range+ 17)
 
+(define %strerror (foreign-fn "mdb_strerror" (list int) '*))
 (define (check-error err)
   (if (zero? err)
       #t
-      (raise-exception (make-exception-with-message (pointer->string ((foreign-fn "mdb_strerror" (list int) '*) err)))
+      (raise-exception (make-exception-with-message (pointer->string (%strerror err)))
                        #:continuable? #t)))
 
 (define* (env-create #:key (maxdbs 1) maxreaders mapsize)
@@ -313,28 +314,32 @@ pointer. You have to explicitly provide the size for the pointer."
 (define (dbi-close env dbi)
   ((foreign-fn "mdb_dbi_close" `(* ,unsigned-int) void) env dbi))
 
+(define %get (foreign-fn "mdb_get" `(* ,unsigned-int * *)))
 (define* (get txn dbi key)
   "Get the val for the KEY (anything that `make-val' accepts)."
   (let* ((data-ptr (unwrap-val (make-val))))
     (check-error
-     ((foreign-fn "mdb_get" `(* ,unsigned-int * *))
-      txn dbi (unwrap-val (make-val key)) data-ptr))
+     (%get txn dbi (unwrap-val (make-val key)) data-ptr))
     (wrap-val data-ptr)))
 (define ref get)
+
+(define %put (foreign-fn "mdb_put" `(* ,unsigned-int * * ,unsigned-int)))
 (define* (put txn dbi key data #:optional (flags 0))
   "Put DATA (anything `make-val`-able) under key (ditto)."
   (check-error
-   ((foreign-fn "mdb_put" `(* ,unsigned-int * * ,unsigned-int))
+   (%put
     txn dbi
     (unwrap-val (make-val key))
     (unwrap-val (make-val data))
     flags)))
 (define put! put)
 (define set! put)
+
+(define %del (foreign-fn "mdb_del" `(* ,unsigned-int * *)))
 (define* (del txn dbi key #:optional (data #f))
   "Remove the DATA under KEY."
   (check-error
-   ((foreign-fn "mdb_del" `(* ,unsigned-int * *))
+   (%del
     txn dbi
     (unwrap-val (make-val key))
     (unwrap-val (make-val data)))))
@@ -351,6 +356,7 @@ pointer. You have to explicitly provide the size for the pointer."
 (define (cursor-close cursor)
   ((foreign-fn "mdb_cursor_close" `(*) void) cursor))
 
+(define %cursor-get (foreign-fn "mdb_cursor_get" `(* * * ,int)))
 (define* (cursor-get cursor #:optional (op +get-current+) (original-key #f))
   "Set the CURSOR pointer according to the OP and return key-value pair.
 
@@ -361,8 +367,7 @@ val objects."
          (data (make-val))
          (data-ptr (unwrap-val data)))
     (check-error
-     ((foreign-fn "mdb_cursor_get" `(* * * ,int))
-      cursor key-ptr data-ptr op))
+     (%cursor-get cursor key-ptr data-ptr op))
     (list key data)))
 (define (cursor-first cursor)
   (cursor-get cursor +first+))
