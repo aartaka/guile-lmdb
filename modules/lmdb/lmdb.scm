@@ -300,7 +300,8 @@ pointer. You have to explicitly provide the size for the pointer."
 
 (define* (dbi-open txn #:optional (name #f) (flags +create+))
   "Create a new DBI and return it."
-  (let ((ptr (alloc-ptr (sizeof unsigned-int))))
+  (let* ((uint-size (sizeof unsigned-int))
+         (ptr (alloc-ptr uint-size)))
     ;; FIXME: DBI is not a pointer, but rather unsigned-int.
     (check-error ((foreign-fn "mdb_dbi_open" `(* * ,unsigned-int *))
                   txn (if name
@@ -308,8 +309,8 @@ pointer. You have to explicitly provide the size for the pointer."
                           %null-pointer)
                   flags ptr))
     (first (bytevector->uint-list
-            (pointer->bytevector ptr (sizeof unsigned-int))
-            (endianness little) (sizeof unsigned-int)))))
+            (pointer->bytevector ptr uint-size)
+            (endianness little) uint-size))))
 
 (define (dbi-close env dbi)
   ((foreign-fn "mdb_dbi_close" `(* ,unsigned-int) void) env dbi))
