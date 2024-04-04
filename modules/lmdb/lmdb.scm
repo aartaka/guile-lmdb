@@ -340,10 +340,7 @@ pointer. You have to explicitly provide the size for the pointer."
 (define* (del txn dbi key #:optional (data #f))
   "Remove the DATA under KEY."
   (check-error
-   (%del
-    txn dbi
-    (unwrap-val (make-val key))
-    (unwrap-val (make-val data)))))
+   (%del txn dbi (unwrap-val (make-val key)) (unwrap-val (make-val data)))))
 (define del! del)
 (define remove! del)
 
