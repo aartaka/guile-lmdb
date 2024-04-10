@@ -45,4 +45,4 @@ Several conveniences are added on top:
 @end itemize\n")
     (license license:gpl3+)))
 
-guile-lmdb
+guile-lmdb-git
