@@ -8,12 +8,12 @@
  #:use-module (guix git-download)
  #:use-module ((guix licenses) #:prefix license:))
 
-(define-public guile-lmdb
+(define-public guile-lmdb-git
   (package
-    (name "guile-lmdb")
+    (name "guile-lmdb-git")
     (version "0.0.1")
     (source (local-file ".."
-                        "guile-lmdb-checkout"
+                        "guile-lmdb-git-checkout"
                         #:recursive? #t
                         #:select? (or (git-predicate (dirname (current-source-directory)))
                                       (const #t))))
