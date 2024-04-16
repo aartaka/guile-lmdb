@@ -14,7 +14,8 @@ Thus
 
 ## Installation
 
-Ensure that you have the modules/ directory in your `GUILE_LOAD_PATH` and run Guile.
+Ensure that you have the modules/ directory in your `GUILE_LOAD_PATH`/`%load-path` and load it.
+That's it.
 
 Environment management is easier with Guix, that's why there's guix.scm.
 You can also install this repo as a Guix channel:
