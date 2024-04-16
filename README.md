@@ -12,6 +12,24 @@ Thus
 - Lots of optional arguments for (opinionated) non-mandatory
   arguments.
 
+## Installation
+
+Ensure that you have the modules/ directory in your `GUILE_LOAD_PATH` and run Guile.
+
+Environment management is easier with Guix, that's why there's guix.scm.
+You can also install this repo as a Guix channel:
+``` scheme
+;; .config/guix/channels.scm
+(cons*
+ (channel
+  (name 'guile-lmdb)
+  (url "https://github.com/aartaka/guile-lmdb.git")
+  (branch "master"))
+  ...
+  %default-channels)
+```
+Both guix.scm and the channel provide `guile-lmdb-git` package with the fresh code.
+
 ## Getting Started
 
 A simple listing for all the keys and values in the db might look like
