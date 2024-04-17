@@ -476,24 +476,26 @@ ENV is open at PATH and created with ARGS."
    args ...))
 
 
-(define* (call-with-wrapped-cursor path thunk #:rest args)
+(define* (call-with-wrapped-cursor path name thunk #:rest args)
   "Run THUNK with (ENV TXN DBI CURSOR) created for it.
-ARGS and PATH are for environment creation."
+ARGS and PATH are for environment creation.
+NAME (string or #f) is for DBI creation."
   (apply call-with-env-and-txn
          path
          (lambda (env txn)
-           (let ((dbi (dbi-open txn #f 0)))
+           (let ((dbi (dbi-open txn name 0)))
              (call-with-cursor
               txn dbi
               (lambda (cursor)
                 (thunk env txn dbi cursor)))))
          args))
 
-(define-syntax-rule (with-wrapped-cursor (path args ...) (env txn dbi cursor) body ...)
+(define-syntax-rule (with-wrapped-cursor (path name args ...) (env txn dbi cursor) body ...)
   "Run BODY with ENV and TXN bound to meaningful values.
-ENV is open at PATH and created with ARGS."
+ENV is open at PATH and created with ARGS.
+NAME (string or #f) is for DBI creation."
   (call-with-wrapped-cursor
-   path
+   path name
    (lambda (env txn dbi cursor)
      body ...)
    args ...))
