@@ -8,7 +8,10 @@
   #:export-syntax (with-cursor
                    with-env-and-txn
                    with-wrapped-cursor)
-  #:export ( ;; Environment flags
+  #:export (;; Custom function setters
+            set-compare!
+            set-dupsort!
+            ;; Environment flags
             +fixedmap+
             +nosubdir+
             +nosync+
@@ -180,6 +183,20 @@
       #t
       (raise-exception (make-exception-with-message (pointer->string (%strerror err)))
                        #:continuable? #t)))
+
+(define (set-compare! txn dbi function)
+  (check-error
+   ((foreign-fn "mdb_set_compare" '(* * *))
+    txn dbi (if (pointer? function)
+                function
+                (procedure->pointer int function '(* *))))))
+(define (set-dupsort! txn dbi function)
+  (check-error
+   ((foreign-fn "mdb_set_dupsort" '(* * *))
+    txn dbi (if (pointer? function)
+                function
+                (procedure->pointer int function '(* *))))))
+;; TODO: Do set-relfunc! and set-relctx! make any sense?
 
 (define* (env-create #:key (maxdbs 1) maxreaders mapsize)
   "Make a new env and set the MAXDBS number (or 1)—maxdb number is mandatory.
