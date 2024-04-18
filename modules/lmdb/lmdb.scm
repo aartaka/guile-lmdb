@@ -103,7 +103,7 @@
             stat?
             make-stat
             stat-depth
-            stat-entities
+            stat-entries
             stat-pages
             dbi-stat
             env-stat
