@@ -416,7 +416,7 @@ val objects."
      body ...)))
 
 (define (for-cursor cursor thunk)
-  "Walk the CURSOR, calling THUNK with entry keys and values (val-s).
+  "Walk the CURSOR, calling THUNK with entry's (KEY VALUE).
 Stops at the last item.
 Requires that DB has at least one entry, otherwise meaningless and
 throwing errors."
