@@ -186,13 +186,13 @@
 
 (define (set-compare! txn dbi function)
   (check-error
-   ((foreign-fn "mdb_set_compare" '(* * *))
+   ((foreign-fn "mdb_set_compare" `(* ,unsigned-int *))
     txn dbi (if (pointer? function)
                 function
                 (procedure->pointer int function '(* *))))))
 (define (set-dupsort! txn dbi function)
   (check-error
-   ((foreign-fn "mdb_set_dupsort" '(* * *))
+   ((foreign-fn "mdb_set_dupsort" `(* ,unsigned-int *))
     txn dbi (if (pointer? function)
                 function
                 (procedure->pointer int function '(* *))))))
