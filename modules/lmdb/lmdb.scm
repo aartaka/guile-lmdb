@@ -431,7 +431,8 @@ throwing errors."
     (unless (kv-eq? first-kv last-kv)
       (do ((kv (cursor-get cursor +get-next+)
                (cursor-next cursor)))
-          ((kv-eq? kv last-kv))
+          ((kv-eq? kv last-kv)
+           (apply thunk kv))
         (apply thunk kv)))))
 
 (define-wrapped-pointer-type stat
