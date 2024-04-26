@@ -164,4 +164,18 @@ Walk the CURSOR, calling THUNK with entry keys and values (val-s).
 Stops at the last item.
 Requires that DB has at least one entry, otherwise meaningless and
 throwing errors.
+,apropos mdb:
+,apropos mdb:
+(lmdb lmdb): mdb:+nooverwrite+
+(lmdb lmdb): mdb:txn-renew	#<procedure txn-renew (txn)>
+(lmdb lmdb): mdb:make-stat	#<procedure make-stat ()>
+(lmdb lmdb): mdb:ref	#<procedure get (txn dbi key)>
+(lmdb lmdb): mdb:stat?
+(lmdb lmdb): mdb:txn-commit	#<procedure txn-commit (txn)>
+(lmdb lmdb): mdb:call-with-cursor	#<procedure call-with-cursor (txn dbi thunk)>
+(lmdb lmdb): mdb:+noodupdata+
+(lmdb lmdb): mdb:dbi-stat	#<procedure dbi-stat (txn dbi)>
+(lmdb lmdb): mdb:val-data-parse	#<procedure val-data-parse (val types)>
+(lmdb lmdb): mdb:+current+
+...
 ```
