@@ -165,7 +165,6 @@ Stops at the last item.
 Requires that DB has at least one entry, otherwise meaningless and
 throwing errors.
 ,apropos mdb:
-,apropos mdb:
 (lmdb lmdb): mdb:+nooverwrite+
 (lmdb lmdb): mdb:txn-renew	#<procedure txn-renew (txn)>
 (lmdb lmdb): mdb:make-stat	#<procedure make-stat ()>
