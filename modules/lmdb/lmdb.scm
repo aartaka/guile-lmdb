@@ -315,7 +315,7 @@ pointer. You have to explicitly provide the size for the pointer."
                     ((pointer? contents)
                      contents)))))))
 
-(define* (dbi-open txn #:optional (name #f) (flags (+ +create+ +dupsort+)))
+(define* (dbi-open txn #:optional (name #f) (flags +create+))
   "Create a new DBI and return it."
   (let* ((uint-size (sizeof unsigned-int))
          (ptr (alloc-ptr uint-size)))
