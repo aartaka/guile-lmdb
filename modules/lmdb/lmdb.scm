@@ -501,7 +501,7 @@ NAME (string or #f) is for DBI creation."
   (apply call-with-env-and-txn
          path
          (lambda (env txn)
-           (let ((dbi (dbi-open txn name 0)))
+           (let ((dbi (dbi-open txn name)))
              (call-with-cursor
               txn dbi
               (lambda (cursor)
