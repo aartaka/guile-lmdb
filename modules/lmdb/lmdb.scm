@@ -268,7 +268,14 @@ Useful to manage several PATHs with env copies at once."
   (second (parse-c-struct (unwrap-val val) `(,size_t *))))
 
 (define (val-data-string val)
-  (pointer->string (val-data val) (val-size val)))
+  ;; This is necessary because interpreting broken memory region makes
+  ;; Guile throw errors and stop. Returning #f instead.
+  (with-exception-handler
+      (lambda (arg)
+        #f)
+    (lambda ()
+      (pointer->string (val-data val) (val-size val)))
+    #:unwind? #t))
 
 (define (val-data-bv val)
   (pointer->bytevector (val-data val) (val-size val)))
