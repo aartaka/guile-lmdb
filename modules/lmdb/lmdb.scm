@@ -316,7 +316,7 @@ pointer. You have to explicitly provide the size for the pointer."
                     ((eq? #f contents)
                      %null-pointer)
                     ((string? contents)
-                     (string->pointer contents))
+                     (string->pointer contents "UTF-8"))
                     ((bytevector? contents)
                      (bytevector->pointer contents))
                     ((pointer? contents)
