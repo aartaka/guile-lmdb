@@ -70,7 +70,8 @@
             txn-reset
             txn-commit
             txn-renew
-            ;; Valus
+            ;; Values
+            <val>
             val?
             make-val
             wrap-val
@@ -103,6 +104,7 @@
             cursor-del
             for-cursor
             ;; Stat
+            <stat>
             stat?
             make-stat
             stat-depth
@@ -252,7 +254,7 @@ Useful to manage several PATHs with env copies at once."
 (define (txn-renew txn)
   (check-error ((foreign-fn "mdb_txn_renew" `(*)) txn)))
 
-(define-wrapped-pointer-type val
+(define-wrapped-pointer-type <val>
   val?
   wrap-val unwrap-val
   (lambda (v p)
@@ -442,7 +444,7 @@ throwing errors."
            (apply thunk kv))
         (apply thunk kv)))))
 
-(define-wrapped-pointer-type stat
+(define-wrapped-pointer-type <stat>
   stat?
   wrap-stat unwrap-stat
   (lambda (s p)
