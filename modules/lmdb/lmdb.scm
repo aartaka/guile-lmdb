@@ -408,7 +408,7 @@ val objects."
 (define* (cursor-del cursor #:optional (flags 0))
   (check-error
    ((foreign-fn "mdb_cursor_del" `(* ,unsigned-int))
-    cursor)))
+    cursor flags)))
 
 (define (call-with-cursor txn dbi thunk)
   "Call thunk with the cursor established from TXN and DBI."
