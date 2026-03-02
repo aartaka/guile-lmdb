@@ -135,6 +135,7 @@
 (define +nosubdir+ #x4000)
 (define +nosync+ #x10000)
 (define +rdonly+ #x20000)
+(define +readonly+ #x20000) ;; Alias for above
 (define +nometasync+ #x40000)
 (define +writemap+ #x80000)
 (define +mapasync+ #x100000)
